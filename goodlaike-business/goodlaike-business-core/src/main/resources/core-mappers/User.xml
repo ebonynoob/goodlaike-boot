@@ -1,0 +1,121 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="User">
+
+	<!-- 新增用户 -->
+	<insert id="insertAndReturnId" parameterType="user">
+		INSERT INTO `user`
+		(
+		`nickname`,
+		`mobilePhone`,
+		`avator`,
+		`companyName`,
+		`email`,
+		`salt`,
+		`password`,
+		`createUserId`,
+		`updateUserId`)
+		VALUES
+		(
+		#{nickname},
+		#{mobilePhone},
+		#{avator},
+		#{companyName},
+		#{email},
+		#{salt},
+		md5(concat(#{salt},md5(#{password}))),
+		#{createUserId},
+		#{createUserId}
+		);
+		<selectKey keyProperty="userId" resultType="int">
+			select @@IDENTITY
+		</selectKey>
+	</insert>
+
+	<!-- 根据用户ID与密码获得用户 -->
+	<select id="findByUserIdAndPassword" resultType="user"
+		parameterType="map">
+		select *
+		from
+		v_user
+		where
+		userId = #{userId} and password = md5(concat(salt,md5(#{password})))
+	</select>
+	
+	<!-- 根据手机号码与密码获得用户 -->
+	<select id="findByMobilePhoneAndPassword" resultType="user"
+		parameterType="map">
+		select *
+		from
+		v_user
+		where
+		mobilePhone = #{mobilePhone} and password =
+		md5(concat(salt,md5(#{password})))
+	</select>
+
+	<!-- 根据id获得用户 -->
+	<select id="findById" resultType="user" parameterType="int">
+		select *
+		from
+		v_user
+		where userId = #{userId}
+	</select>
+	
+	<!-- 更新用户 -->
+	<update id="update" parameterType="map">
+		update user
+		SET
+		<if test="nickname!=null">`nickname` = #{nickname},</if>
+		<if test="mobilephone!=null">`mobilephone` = #{mobilephone},</if>
+		<if test="avator!=null">`avator` = #{avator},</if>
+		<if test="companyName!=null">`companyName` = #{companyName},</if>
+		<if test="email!=null">`email`= #{email},</if>
+		`updateUserId` = #{updateUserId},
+		`updateTime` = now()
+		WHERE
+		`userId` = #{userId};
+	</update>
+
+	<!-- 逻辑删除用户 -->
+	<update id="delete" parameterType="map">
+		update user
+		set `status` = 9,
+		`updateUserId` = #{operateUserId},
+		`updateTime` = now()
+		where userId =
+		#{userId}
+	</update>
+
+	<!-- 修改密码 -->
+	<update id="changePassword" parameterType="map">
+		update user
+		set
+		`password` = md5(concat(salt,md5(#{password}))),
+		`updateUserId` =
+		#{operateUserId},
+		`updateTime` = now()
+		where userId =
+		#{userId}
+	</update>
+
+	<!-- 检查手机号码是否存在 -->
+	<select id="isMobilePhoneExist" parameterType="map" resultType="int">
+		select count(1) from 
+		v_user 
+		where mobilePhone = #{mobilePhone} 
+		<if test="userId>0">
+			and userId != #{userId}
+		</if>
+	</select>
+	
+	<!-- 检查邮箱是否存在 -->
+	<select id="isEmailExist" parameterType="map" resultType="int">
+		select count(1) from 
+		v_user 
+		where email = #{email} 
+		<if test="userId>0">
+			and userId != #{userId}
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.goodlaike.boot</groupId>
+		<artifactId>goodlaike-boot</artifactId>
+		<version>0.2.0</version>
+	</parent>
+	
+	<artifactId>goodlaike-business</artifactId>
+	<version>0.2.0</version>
+	
+	<packaging>pom</packaging>
+	<name>goodlaike 业务组件</name>
+	<description>goodlaike 业务组件</description>
+
+	<modules>
+		<module>goodlaike-business-news</module>
+		<module>goodlaike-business-core</module>
+		<module>goodlaike-business-fileupload</module>
+	</modules>
+
+	<dependencies>
+		<!-- goodlaike-framework -->
+		<dependency>
+			<groupId>com.goodlaike.boot</groupId>
+			<artifactId>goodlaike-framework-dao-mybatis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.goodlaike.boot</groupId>
+			<artifactId>goodlaike-framework-tools</artifactId>
+		</dependency>
+		<!--spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+		</dependency>
+
+		<!-- log4j -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+
+		<!--dateTimeFormat -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
+		
+		<!-- tomcat -->
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jdbc</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jdbc</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+
+	<!-- 插件配置 -->
+	<build>
+		<defaultGoal>package</defaultGoal>
+	</build>
+</project>
