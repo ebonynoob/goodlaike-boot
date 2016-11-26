@@ -1,0 +1,112 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="NewsPicture">
+
+	<!-- 批量插入新闻图片 -->
+	<insert id="batchInsert" parameterType="list">
+		INSERT INTO `news_picture`
+		(
+		`newsId`,
+		`picPath`,
+		`main`,
+		`sort`,
+		`createUserId`,
+		`updateUserId`)
+		select
+		newsId,picPath,main,sort,createUserId,updateUserId from
+		<foreach collection="list" item="picture" open="(" close=")"
+			separator=" union all ">
+			select #{picture.newsId} as newsId,#{picture.picPath} as
+			picPath,#{picture.main} as main,#{picture.sort} as
+			sort,#{picture.createUserId} as createUserId,#{picture.createUserId}
+			as updateUserId
+		</foreach>
+		as t
+		where not exists (
+		select 1 from news_picture as np
+		where np.newsId
+		= t.newsId and np.picPath = t.picPath and np.status = 0
+		);
+	</insert>
+
+	<!-- 删除所有不匹配的图片数据 -->
+	<update id="updateNoneMatch" parameterType="map">
+		update `news_picture` np
+		set status = 9,
+		updateUserId = #{userId},
+		updateTime = now()
+		where status = 0 and newsId=#{newsId} and not exists
+		(select 1
+		from
+		<foreach collection="list" item="picture" open="(" close=")"
+			separator=" union all ">
+			select #{picture.newsId} as newsId,#{picture.picPath} as
+			picPath,#{picture.main} as main,#{picture.sort} as sort
+		</foreach>
+		as t
+		where t.newsId = np.newsId and t.picPath = np.picPath and
+		t.main=np.main and t.sort=np.sort and np.status = 0
+		);
+	</update>
+
+	<!-- 根据id获得新闻图片 -->
+	<select id="findByNewsId" resultType="newsPicture"
+		parameterType="int">
+		select *
+		from
+		v_news_picture
+		where newsId = #{newsId}
+		order
+		by sort, id desc
+	</select>
+
+
+	<!-- 逻辑删除单张图片 -->
+	<update id="delete" parameterType="map">
+		update `news_picture`
+		set
+		`status` = 9,
+		`updateUserId` = #{userId},
+		`updateTime` = now()
+		where id =
+		#{id}
+	</update>
+
+	<!-- 根据新闻ID 删除所有图片 -->
+	<update id="deleteByNewsId" parameterType="map">
+		update `news_picture`
+		set `status` = 9,
+		`updateUserId` = #{userId},
+		`updateTime` = now()
+		where
+		newsId = #{newsId}
+	</update>
+
+	<!-- 根据主键ID与外键ID删除图片 -->
+	<update id="deleteByIdAndNewsId" parameterType="map">
+		update
+		`news_picture`
+		set `status` = 9,
+		`updateUserId` = #{userId},
+		`updateTime` = now()
+		where
+		newsId = #{newsId} and id = #{id}
+	</update>
+
+
+	<!-- 根据id获得图片 -->
+	<select id="findById" resultType="newsPicture">
+		select * from v_news_picture
+		where id = #{id}
+	</select>
+
+	<!-- 根据ID与外键ID获得图片 -->
+	<select id="findByIdAndNewsId" resultType="newsPicture"
+		parameterType="map">
+		select * from v_news_picture
+		where id = #{id} and newsId
+		=#{newsId}
+	</select>
+
+</mapper>

@@ -1,0 +1,94 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Ad">
+
+	<cache eviction="LRU" flushInterval="3600000" size="1024"
+		readOnly="true" />
+
+	<!-- 分页 -->
+	<select id="queryForPaginate" resultType="ad" parameterType="pagination">
+		select * from t_ad
+		${extensionSql}
+		${limitSql}
+	</select>
+
+	<!-- 分页统计 -->
+	<select id="countForPaginate" resultType="int" parameterType="pagination">
+		select count(1) from t_ad
+		${extensionSql}
+	</select>
+
+	<!-- 新增广告 -->
+	<insert id="insertAndReturnId" parameterType="ad">
+		INSERT INTO `t_ad`
+		(
+		`title`,
+		`subtitle`,
+		`picPath`,
+		`type`,
+		`link`,
+		`createUserId`,
+		`updateUserId`)
+		VALUES
+		(
+		#{title},
+		#{subtitle},
+		#{picPath},
+		#{type},
+		#{link},
+		#{createUserId},
+		#{createUserId}
+		);
+		<selectKey keyProperty="id" resultType="int">
+			select @@IDENTITY
+		</selectKey>
+	</insert>
+
+	<!-- 根据id获得广告 -->
+	<select id="findById" resultType="ad" parameterType="int"
+		useCache="false">
+		select *
+		from
+		v_ad
+		where id = #{id}
+	</select>
+
+	<!-- 获得所有广告 -->
+	<select id="findAll" resultType="ad">
+		select *
+		from
+		v_ad
+	</select>
+
+	<!-- 更新广告 -->
+	<update id="update" parameterType="ad">
+		update t_ad
+		SET
+		`title`
+		=
+		#{title},
+		`subtitle` = #{subtitle},
+		`picPath` =
+		#{picPath},
+		`link` =
+		#{link},
+		`updateUserId` =
+		#{updateUserId},
+		`updateTime` =
+		now()
+		WHERE `id`
+		= #{id};
+	</update>
+
+	<!-- 逻辑删除广告 -->
+	<update id="delete" parameterType="map">
+		update t_ad
+		set `status` =
+		9,
+		`updateUserId` = #{userId},
+		`updateTime` = now()
+		where id = #{id}
+	</update>
+
+</mapper>

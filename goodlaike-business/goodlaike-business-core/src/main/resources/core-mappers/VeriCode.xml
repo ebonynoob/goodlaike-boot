@@ -1,0 +1,41 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="VeriCode">
+
+	<!-- 插入验证码 -->
+	<insert id="insertVeriCode" parameterType="veriCode">
+		INSERT INTO `t_vericode`
+		(
+		`mobilePhone`,
+		`veriCode`,
+		`type`
+		)
+		VALUES
+		(
+		#{mobilePhone},
+		#{veriCode},
+		#{type}
+		);
+	</insert>
+
+	<!-- 获得验证码 -->
+	<select id="findVeriCode" parameterType="map" resultType="veriCode">
+		select * from 
+		t_vericode
+		where status = 0 and mobilePhone = #{mobilePhone} and type = #{type} 
+			  -- and createTime > date_add(now(), INTERVAL  -30 minute)
+		order by id desc
+		limit 1
+	</select>
+
+	<!-- 使用验证码 -->
+	<update id="updateVeriCode" parameterType="map">
+		UPDATE `t_vericode`
+		SET `status` = 1,
+		`updateTime` = now()
+		WHERE status = 0 and mobilePhone = #{mobilePhone} and type = #{type} and veriCode = #{veriCode}
+			  and createTime > date_add(now(), INTERVAL  -30 minute)
+	</update>
+	
+</mapper>

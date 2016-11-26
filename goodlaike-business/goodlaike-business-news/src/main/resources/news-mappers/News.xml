@@ -1,0 +1,100 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="News">
+	<!-- 分页 -->
+	<select id="queryForPaginate" resultType="vNews" parameterType="pagination">
+		select * from ${table}
+		${extensionSql}
+		${limitSql}
+	</select>
+
+	<!-- 分页统计 -->
+	<select id="countForPaginate" resultType="int" parameterType="pagination">
+		select count(1) from ${table}
+		${extensionSql}
+	</select>
+
+	<!-- 新增新闻 -->
+	<insert id="insertAndReturnId" parameterType="news">
+		INSERT INTO `news_cn`
+		(
+		`title`,
+		`subtitle`,
+		`content`,
+		`type`,
+		`link`,
+		`createUserId`,
+		`updateUserId`)
+		VALUES
+		(
+		#{title},
+		#{subtitle},
+		#{content},
+		#{type},
+		#{link},
+		#{createUserId},
+		#{createUserId}
+		);
+		<selectKey keyProperty="id" resultType="int">
+			select @@IDENTITY
+		</selectKey>
+	</insert>
+
+	<!-- 填充扩展新闻 -->
+	<insert id="insertOthers" parameterType="map">
+		<foreach collection="langs" item="lang">
+			INSERT INTO news_${lang}
+			(
+			`id`,
+			`title`,
+			`subtitle`,
+			`content`,
+			`link`
+			)
+			VALUES
+			(
+			#{id},
+			'',
+			'',
+			'',
+			''
+			);
+		</foreach>
+	</insert>
+
+	<!-- 根据id获得新闻 -->
+	<select id="findById" resultType="vNews" parameterType="map">
+		select *
+		from
+		v_news_${lang}
+		where id = #{id}
+	</select>
+
+	<!-- 更新新闻 -->
+	<update id="update" parameterType="map">
+		update news_${lang}
+		SET
+		`title`
+		= #{news.title},
+		`subtitle` = #{news.subtitle},
+		`content` =
+		#{news.content},
+		`link` = #{news.link},
+		`updateUserId` =
+		#{news.updateUserId},
+		`updateTime` = now()
+		WHERE `id` = #{news.id};
+	</update>
+
+	<!-- 逻辑删除新闻 -->
+	<update id="delete" parameterType="map">
+		update news_cn
+		set `status` =
+		9,
+		`updateUserId` = #{userId},
+		`updateTime` = now()
+		where id = #{id}
+	</update>
+
+</mapper>
