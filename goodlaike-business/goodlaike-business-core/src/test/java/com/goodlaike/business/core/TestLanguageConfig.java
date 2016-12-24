@@ -1,4 +1,4 @@
-package org.goodlaike.business.core;
+package com.goodlaike.business.core;
 
 import org.junit.Test;
 

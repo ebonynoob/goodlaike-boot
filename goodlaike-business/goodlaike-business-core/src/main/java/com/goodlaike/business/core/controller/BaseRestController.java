@@ -47,7 +47,7 @@ public class BaseRestController {
 	 * @author Jail Hu
 	 */
 	@ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class })
-	public ResponseEntity<?> illegalArgumentExceptionHandler(IllegalArgumentException e) {
+	public ResponseEntity<?> illegalArgumentExceptionHandler(RuntimeException e) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(RestResult.code(400).message(e.getMessage()));
 	}
 

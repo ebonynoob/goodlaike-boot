@@ -1,10 +1,10 @@
-package org.goodlaike.business.core.service;
+package com.goodlaike.business.core.service;
 
-import org.goodlaike.business.core.BaseTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.goodlaike.business.core.BaseTest;
 import com.goodlaike.business.core.model.User;
 import com.goodlaike.business.core.service.user.UserService;
 
